@@ -1,0 +1,49 @@
+🚀 Build Instructions (Quickstart)
+These instructions assume you are building the OS on a host machine running Ubuntu or Linux Mint.
+
+1. Install Host Prerequisites
+Your host system requires bootstrapping tools. Open a terminal and run:
+
+sudo apt update
+sudo apt install -y debootstrap squashfs-tools genisoimage curl systemd-container
+2. Download the Build Script
+Download the latest unified build script (build-os.sh) to your machine.
+
+3. Make the Script Executable
+chmod +x build-os.sh
+4. Execute the Build
+Run the script with root privileges. By default, the script targets Debian stable (rolling automatically to future stable releases).
+
+To build the default version:
+
+Bash
+sudo ./build-os.sh use script name in this repository
+To build a different Debian branch (e.g., testing or sid):
+
+Bash
+sudo ./build-os.sh testing 
+use script name in this repository
+(The build process typically takes 3 to 15 minutes, depending heavily on your internet connection speed.)
+
+📦 Output and Deployment
+Once the script completes successfully, your custom operating system root filesystem is fully assembled and located at:
+
+/opt/custom-debian-os
+To turn this directory into a bootable installation medium, you must package it into an ISO image. You can use tools like xorriso or mkisofs to create a bootable ISO (e.g., by adding a standard Debian or Ubuntu live-boot kernel/initramfs and bootloader configuration).
+
+🛡️ Advanced: Hybrid APT Pinning
+Because this system mixes Debian core packages with Ubuntu user-space tools, APT pinning is critical.
+
+The build script automatically configures /etc/apt/preferences.d/hybrid-pinning inside the chroot. This configuration enforces that Debian core packages always take precedence (Priority 900) over foreign Ubuntu packages (Priority 100), preventing system library corruption during branch upgrades.
+
+To manually upgrade your system once booted:
+
+Bash
+sudo apt update
+sudo apt dist-upgrade
+🆙 Updating the Canonical Layer
+To ensure your drivers, firmware tools, and PPA management utilities stay aligned with the newest upstream releases from Canonical, run the included utility inside your Tartan OS installation:
+
+Bash
+sudo upgrade-ubuntu-layer
+This tool automatically queries Canonical's servers for the latest release codename (e.g., noble, oracular) and updates your forei
